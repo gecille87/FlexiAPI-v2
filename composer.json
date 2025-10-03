@@ -1,0 +1,15 @@
+{
+  "name": "gecille-uptura/flexiapi",
+  "description": "FlexiAPI - plug-and-play JSON API layer for MySQL (extensible)",
+  "type": "library",
+  "license": "MIT",
+  "require": {
+    "php": ">=8.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "FlexiAPI\\": "src/"
+    }
+  },
+  "bin": ["bin/flexiapi"]
+}
