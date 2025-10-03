@@ -3,6 +3,8 @@
 namespace FlexiAPI\DB;
 
 use PDO;
+use PDOException;
+use FlexiAPI\Utils\Response;
 
 class MySQLAdapter implements DBAdapterInterface
 {
@@ -13,10 +15,19 @@ class MySQLAdapter implements DBAdapterInterface
     {
         $this->config = $config;
         $dsn = "mysql:host={$config['host']};dbname={$config['database']};charset={$config['charset']}";
-        $this->pdo = new PDO($dsn, $config['username'], $config['password'], [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-        ]);
+
+        try {
+            $this->pdo = new PDO($dsn, $config['username'], $config['password'], [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+            ]);
+        } catch (PDOException $e) {
+            // ✅ Return clean JSON instead of fatal error
+            echo Response::json(false, 'Database connection failed', null, 500, [
+                'error' => $e->getMessage()
+            ]);
+            exit;
+        }
     }
 
     public function query(string $sql, array $params = []): array
@@ -58,7 +69,7 @@ class MySQLAdapter implements DBAdapterInterface
         return in_array($table, $this->config['whitelist_tables'] ?? []);
     }
 
-    // ✅ Expose lastInsertId
+    // ✅ Implement lastInsertId() from the interface
     public function lastInsertId(): string
     {
         return $this->pdo->lastInsertId();

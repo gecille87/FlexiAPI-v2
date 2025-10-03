@@ -5,7 +5,8 @@ namespace FlexiAPI\DB;
 interface DBAdapterInterface
 {
     public function query(string $sql, array $params = []): array;
-    public function execute(string $sql, array $params = []): int; // returns affected rows / lastInsertId as needed
+    public function execute(string $sql, array $params = []): int;
+    public function prepare(string $sql);
     public function beginTransaction(): void;
     public function commit(): void;
     public function rollBack(): void;
