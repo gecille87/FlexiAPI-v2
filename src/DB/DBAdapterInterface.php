@@ -10,4 +10,5 @@ interface DBAdapterInterface
     public function commit(): void;
     public function rollBack(): void;
     public function isTableAllowed(string $table): bool;
+    public function lastInsertId(): string;
 }

@@ -64,19 +64,21 @@ class TableController extends BaseController
             $validated = $this->validator->validateCreate($input);
             $table = $validated['table'];
             $rows = $validated['data'];
+            $upsert = $validated['upsert'] ?? false; // Optional flag
 
             $columns = array_keys($rows[0]);
             $colList = implode(',', array_map(fn($c) => "`$c`", $columns));
-            $params = [];
-            $placeRows = [];
 
+            // Build placeholders for multiple rows
+            $placeRows = [];
+            $params = [];
             $i = 0;
-            foreach ($rows as $r) {
+            foreach ($rows as $row) {
                 $placeholders = [];
                 foreach ($columns as $col) {
                     $key = ":{$col}_{$i}";
                     $placeholders[] = $key;
-                    $params[$key] = $r[$col] ?? null;
+                    $params[$key] = $row[$col] ?? null;
                 }
                 $placeRows[] = '(' . implode(',', $placeholders) . ')';
                 $i++;
@@ -84,18 +86,37 @@ class TableController extends BaseController
 
             $sql = "INSERT INTO `{$table}` ({$colList}) VALUES " . implode(',', $placeRows);
 
+            // ✅ Add ON DUPLICATE KEY UPDATE if upsert requested
+            if ($upsert) {
+                $updateParts = [];
+                foreach ($columns as $col) {
+                    $updateParts[] = "`$col`=VALUES(`$col`)";
+                }
+                $sql .= " ON DUPLICATE KEY UPDATE " . implode(',', $updateParts);
+            }
+
             $this->db->beginTransaction();
             $this->db->execute($sql, $params);
+
+            $firstId = (int) $this->db->lastInsertId();
+            $count = count($rows);
+
+            $insertedIds = $firstId > 0 ? range($firstId, $firstId + $count - 1) : [];
+
             $this->db->commit();
 
-            return Response::json(true, 'Rows inserted successfully', ['inserted' => $i]);
+            return Response::json(true, $upsert ? 'Rows upserted successfully' : 'Rows inserted successfully', [
+                'ids' => $insertedIds
+            ]);
         } catch (\InvalidArgumentException $e) {
             return Response::json(false, $e->getMessage(), null, 400);
         } catch (\Exception $e) {
             $this->db->rollBack();
-            return Response::json(false, 'Insert failed: ' . $e->getMessage(), null, 500);
+            return Response::json(false, 'Insert/Upsert failed: ' . $e->getMessage(), null, 500);
         }
     }
+
+
 
     /**
      * ✅ PUT (Update rows)
@@ -150,8 +171,8 @@ class TableController extends BaseController
                 $params[$k] = $v;
             }
 
-            $limitSql = $limit ? " LIMIT :__del_limit__ " : '';
-            if ($limit) $params[':__del_limit__'] = $limit;
+            // ✅ Directly inject limit after validating as int
+            $limitSql = $limit ? " LIMIT " . (int)$limit : '';
 
             $sql = "DELETE FROM `{$table}` WHERE `{$column}` IN (" . implode(',', $placeholders) . ") {$limitSql}";
 
