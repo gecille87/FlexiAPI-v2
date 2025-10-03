@@ -264,6 +264,193 @@ curl -X DELETE "http://127.0.0.1:8080/index.php" \
 
 ---
 
+
+# Guide to Adding Custom SELECT Methods
+
+This guide explains how to extend **FlexiAPI** with your own **complex SELECT queries** (or other database operations) using the **Custom Methods** feature.
+
+---
+
+## What Are Custom Methods?
+
+FlexiAPI provides a `CustomController` that lets you define **user-specific SQL queries** (beyond simple `get`, `create`, `update`, `delete`).
+These methods are stored in `src/Custom/UserMethods.php` and are automatically accessible through the API.
+
+This makes it easy to expose **complex reporting queries, joins, aggregations, or stored procedure calls** as simple API endpoints.
+
+---
+
+## File Structure (Relevant Parts)
+
+```
+├─ src/
+│  ├─ Controllers/
+│  │  ├─ CustomController.php   # Handles custom methods
+│  ├─ Custom/
+│  │  └─ UserMethods.php        # Place your custom SQL logic here
+│  ├─ DB/
+│  │  └─ MySQLAdapter.php       # Executes queries (returns arrays)
+```
+
+---
+
+## Step 1 – Define Your Custom Method
+
+Open `src/Custom/UserMethods.php`.
+This file **returns an associative array** where the key is the method name, and the value is a function that takes two parameters:
+
+```php
+<?php
+
+return [
+    'getTopUsers' => function($db, $params) {
+        $limit = (int)($params['limit'] ?? 5);
+        $sql   = "SELECT id, username, email 
+                  FROM users 
+                  WHERE status = 'active'
+                  ORDER BY created_at DESC 
+                  LIMIT {$limit}";
+        return $db->query($sql); //  $db->query() returns an array
+    },
+
+    'userStats' => function($db, $params) {
+        $sql = "SELECT status, COUNT(*) as count 
+                FROM users 
+                GROUP BY status";
+        return $db->query($sql);
+    }
+];
+```
+
+* `$db` is your **database adapter** (e.g., `MySQLAdapter`).
+* `$params` is an array of values passed from the API request body.
+* Always return an **array** (the adapter already fetches results).
+
+---
+
+## Step 2 – Call Your Custom Method via API
+
+Send a JSON request with `action=custom` and `method=<your_method_name>`.
+
+### Example: `getTopUsers`
+
+```http
+POST /index.php
+Content-Type: application/json
+X-FlexiAPI-Key: secret123
+
+{
+  "action": "custom",
+  "method": "getTopUsers",
+  "params": { "limit": 3 }
+}
+```
+
+### Example Response
+
+```json
+{
+  "status": true,
+  "message": "Custom method 'getTopUsers' executed successfully",
+  "data": [
+    { "id": 10, "username": "alice", "email": "alice@example.com" },
+    { "id": 9, "username": "bob", "email": "bob@example.com" },
+    { "id": 7, "username": "charlie", "email": "charlie@example.com" }
+  ],
+  "error": null
+}
+```
+
+---
+
+##  Step 3 – Example of Aggregation Query
+
+Add a new method to `UserMethods.php`:
+
+```php
+'activeUserCount' => function($db) {
+    $sql  = "SELECT COUNT(*) AS total FROM users WHERE status = 'active'";
+    $rows = $db->query($sql);
+    return $rows[0] ?? ['total' => 0];
+}
+```
+
+Call it with:
+
+```json
+{
+  "action": "custom",
+  "method": "activeUserCount"
+}
+```
+
+**Response:**
+
+```json
+{
+  "status": true,
+  "message": "Custom method 'activeUserCount' executed successfully",
+  "data": { "total": 42 },
+  "error": null
+}
+```
+
+---
+
+## Step 4 – Error Handling
+
+If a custom method is missing or fails:
+
+```json
+{
+  "status": false,
+  "message": "Custom method 'getUnknownStuff' not found",
+  "data": null,
+  "error": "Custom method 'getUnknownStuff' not found"
+}
+```
+
+---
+
+##  Step 5 – Include in Postman Collection
+
+Your `bin/generate_postman.php` can be updated to **auto-load `UserMethods.php`** so every custom method appears in the collection. Example snippet:
+
+```php
+$customFile = __DIR__ . '/../src/Custom/UserMethods.php';
+if (file_exists($customFile)) {
+    $methods = include $customFile;
+    foreach (array_keys($methods) as $name) {
+        $collection['item'][] = [
+            'name' => "Custom: $name",
+            'request' => [
+                'method' => 'POST',
+                'header' => $headers,
+                'url'    => [ 'raw' => $baseUrl . '/index.php', 'host' => [$baseUrl], 'path' => ['index.php'] ],
+                'body'   => [
+                    'mode' => 'raw',
+                    'raw'  => json_encode([
+                        'action' => 'custom',
+                        'method' => $name,
+                        'params' => new \stdClass() // empty object for Postman
+                    ], JSON_PRETTY_PRINT)
+                ]
+            ]
+        ];
+    }
+}
+```
+
+---
+
+## Summary
+
+1. Add your SQL logic inside `src/Custom/UserMethods.php`.
+2. Call it with `{ "action": "custom", "method": "yourMethodName", "params": {...} }`.
+3. Response will always be in FlexiAPI JSON format.
+4. Postman generator can automatically pick them up.
+
+
 ## Testing with Postman
 
 FlexiAPI includes a CLI generator to create a ready-to-import Postman collection.
