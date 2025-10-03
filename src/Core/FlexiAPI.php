@@ -4,6 +4,7 @@ namespace FlexiAPI\Core;
 
 use FlexiAPI\DB\MySQLAdapter;
 use FlexiAPI\Controllers\TableController;
+use FlexiAPI\Controllers\CustomController;
 use FlexiAPI\Utils\Response;
 
 class FlexiAPI
@@ -14,7 +15,14 @@ class FlexiAPI
     public function __construct(array $config)
     {
         $this->config = $config;
-        $this->db = new MySQLAdapter($config['db']);
+
+        try {
+            $this->db = new MySQLAdapter($config['db']);
+        } catch (\Throwable $e) {
+            Response::json(false, 'Database connection failed', null, 500, [
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 
     public function handle(): void
@@ -26,39 +34,57 @@ class FlexiAPI
             Response::json(false, 'Unauthorized: invalid API key', null, 401);
         }
 
-        // detect HTTP verb
-        $method = $_SERVER['REQUEST_METHOD'];
-        $input = $this->getInput();
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+        $input  = $this->getInput();
 
-        // default controller
+        // Default controller
         $controller = new TableController($this->db, $this->config);
 
-        switch ($method) {
-            case 'GET':
-                $controller->get($input);
-                break;
-            case 'POST':
-                $controller->create($input);
-                break;
-            case 'PUT':
-                $controller->update($input);
-                break;
-            case 'DELETE':
-                $controller->delete($input);
-                break;
-            default:
-                Response::json(false, 'Unsupported HTTP method', null, 405);
+        try {
+            switch ($method) {
+                case 'GET':
+                    $controller->get($input);
+                    break;
+
+                case 'POST':
+                    // 🔹 Support for custom method calls
+                    $action = strtolower($input['action'] ?? '');
+                    if ($action === 'custom') {
+                        $custom = new CustomController($this->db, $this->config);
+                        $customMethod = $input['method'] ?? null;
+                        if (!$customMethod) {
+                            Response::json(false, "Custom method not specified", null, 400);
+                        }
+                        $custom->run($customMethod, $input['params'] ?? []);
+                    } else {
+                        $controller->create($input);
+                    }
+                    break;
+
+                case 'PUT':
+                    $controller->update($input);
+                    break;
+
+                case 'DELETE':
+                    $controller->delete($input);
+                    break;
+
+                default:
+                    Response::json(false, 'Unsupported HTTP method', null, 405);
+            }
+        } catch (\Throwable $e) {
+            Response::json(false, 'Unhandled server error', null, 500, [
+                'error' => $e->getMessage()
+            ]);
         }
     }
 
     private function getInput(): array
     {
         $data = [];
-        // GET → query params
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $data = $_GET;
         } else {
-            // POST, PUT, DELETE → JSON body
             $raw = file_get_contents('php://input');
             $json = json_decode($raw, true);
             if (json_last_error() === JSON_ERROR_NONE && is_array($json)) {

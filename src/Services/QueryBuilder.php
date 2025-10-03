@@ -73,7 +73,7 @@ class QueryBuilder
 
         // WHERE
         $whereData = self::buildWhere($conditions);
-        $where = $whereData['sql'];
+        $where  = $whereData['sql'];
         $params = $whereData['params'];
 
         // ORDER BY
@@ -92,19 +92,15 @@ class QueryBuilder
             }
         }
 
-        // LIMIT/OFFSET
+        // LIMIT + OFFSET (safe integers, injected directly)
         $limitSql = '';
-        $offsetSql = '';
         if ($limit !== null) {
-            $limitSql = ' LIMIT :__limit__ ';
-            $params[':__limit__'] = (int)$limit;
-        }
-        if ($offset !== null) {
-            $offsetSql = ' OFFSET :__offset__ ';
-            $params[':__offset__'] = (int)$offset;
+            $limit  = (int)$limit;
+            $offset = (int)($offset ?? 0);
+            $limitSql = " LIMIT {$limit} OFFSET {$offset}";
         }
 
-        $sql = "SELECT {$cols} FROM `{$table}` {$where}{$order}{$limitSql}{$offsetSql}";
+        $sql = "SELECT {$cols} FROM `{$table}` {$where}{$order}{$limitSql}";
         return ['sql' => $sql, 'params' => $params];
     }
 }
