@@ -37,7 +37,6 @@ $examples = [
         'method' => 'POST',
         'url'    => $baseUrl . '/index.php',
         'body'   => [
-            "action" => "create",
             "table"  => "users",
             "data"   => [
                 ["name" => "Jane", "email" => "jane@example.com", "age" => 22],
@@ -49,7 +48,6 @@ $examples = [
         'method' => 'GET',
         'url'    => $baseUrl . '/index.php',
         'query'  => [
-            ["key" => "action", "value" => "get"],
             ["key" => "table", "value" => "users"],
             ["key" => "columns", "value" => "id,name,email"],
             ["key" => "condition", "value" => '[{"field":"status","operator":"=","value":"active"}]'],
@@ -61,7 +59,6 @@ $examples = [
         'method' => 'PUT',
         'url'    => $baseUrl . '/index.php',
         'body'   => [
-            "action" => "update",
             "table"  => "users",
             "where"  => ["field" => "id", "operator" => "=", "value" => 1],
             "data"   => ["status" => "inactive"]
@@ -71,7 +68,6 @@ $examples = [
         'method' => 'DELETE',
         'url'    => $baseUrl . '/index.php',
         'body'   => [
-            "action" => "delete",
             "table"  => "users",
             "column" => "id",
             "values" => [2],
