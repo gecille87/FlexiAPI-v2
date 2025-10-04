@@ -11,5 +11,5 @@
       "FlexiAPI\\": "src/"
     }
   },
-  "bin": ["bin/flexiapi"]
+  "bin": ["bin/generate_postman"]
 }
