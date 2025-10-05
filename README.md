@@ -8,6 +8,8 @@ Versions:
 [Library Composer -  2.0.0]()
 
 
+Sample Usage - [sample](https://github.com/gecille87/AbSiDee)
+
 **FlexiAPI** is a plug-and-play **pure PHP library** that generates a safe and dynamic JSON API layer over your database.  
 It handles repetitive CRUD operations (`SELECT`, `INSERT`, `UPDATE`, `DELETE`) automatically, while supporting pagination, filtering, sorting, and Postman collection generation — so you can focus on building apps, not writing boilerplate SQL.  
 
