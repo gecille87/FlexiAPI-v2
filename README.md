@@ -1,14 +1,14 @@
 
 # FlexiAPI 
 
-Current Version : `v2.0.0`
+Current Version : `v2.0.1`
 
 Versions:  
 [Raw php - 1.0](https://github.com/gecille87/FlexiAPI)  
-[Library Composer -  2.0.0]()
+[Library Composer -  2.0.1](https://packagist.org/packages/gecille-uptura/flexiapi)
 
 
-Sample Usage - [sample](https://github.com/gecille87/AbSiDee)
+Sample Usage - [Project AbsiDee](https://github.com/gecille87/AbSiDee)
 
 **FlexiAPI** is a plug-and-play **pure PHP library** that generates a safe and dynamic JSON API layer over your database.  
 It handles repetitive CRUD operations (`SELECT`, `INSERT`, `UPDATE`, `DELETE`) automatically, while supporting pagination, filtering, sorting, and Postman collection generation — so you can focus on building apps, not writing boilerplate SQL.  
@@ -493,10 +493,12 @@ You now have GET/POST/PUT/DELETE requests pre-configured!
 
 ## Roadmap
 
+* [x] Dynamic JSON API layer
+* [x] Custom SELECT Methods
+* [ ] Custom route support (`/api/custom/...`)
 * [ ] PostgreSQL & SQLite adapters
 * [ ] Role-based access control
 * [ ] Schema migrations
-* [ ] Custom route support (`/api/custom/...`)
 * [ ] Query caching & performance tuning
 
 ---
