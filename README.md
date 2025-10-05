@@ -1,11 +1,11 @@
 
 # FlexiAPI 
 
-Current Version : `v2.0.1`
+Current Version : `v2.0.2`
 
 Versions:  
 [Raw php - 1.0](https://github.com/gecille87/FlexiAPI)  
-[Library Composer -  2.0.1](https://packagist.org/packages/gecille-uptura/flexiapi)
+[Library Composer -  2.0.2](https://packagist.org/packages/gecille-uptura/flexiapi)
 
 
 Sample Usage - [Project AbsiDee](https://github.com/gecille87/AbSiDee)
