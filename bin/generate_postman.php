@@ -161,5 +161,4 @@ if ($db) {
 }
 
 // 🔹 Output Result
-file_put_contents('postman_collection.json', json_encode($collection, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-echo "✅ Postman collection generated successfully: postman_collection.json\n";
+echo json_encode($collection, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
