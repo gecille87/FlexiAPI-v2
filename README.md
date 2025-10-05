@@ -11,9 +11,37 @@ Versions:
 Sample Usage - [Project AbsiDee](https://github.com/gecille87/AbSiDee)
 
 **FlexiAPI** is a plug-and-play **pure PHP library** that generates a safe and dynamic JSON API layer over your database.  
-It handles repetitive CRUD operations (`SELECT`, `INSERT`, `UPDATE`, `DELETE`) automatically, while supporting pagination, filtering, sorting, and Postman collection generation — so you can focus on building apps, not writing boilerplate SQL.  
+It handles repetitive CRUD operations (`SELECT`, `INSERT`, `UPDATE`, `DELETE`) automatically, while supporting pagination, filtering, sorting, and Postman collection generation — so you can focus on building apps, not writing boilerplate SQL.
 
 ---
+
+## Table of Contents
+- [Introduction](#flexiapi)
+- [Features](#features)
+- [Project Structure](#project-structure)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Running Locally](#running-locally)
+- [API Endpoints](#api-endpoints)
+  - [1. GET — Fetch rows](#1-get--fetch-rows)
+  - [2. CREATE — Insert rows](#2-create--insert-rows)
+  - [3. UPDATE — Update rows](#3-update--update-rows)
+  - [4. DELETE — Delete rows](#4-delete--delete-rows)
+- [Guide to Adding Custom SELECT Methods](#guide-to-adding-custom-select-methods)
+  - [What Are Custom Methods?](#what-are-custom-methods)
+  - [File Structure (Relevant Parts)](#file-structure-relevant-parts)
+  - [Step 1 – Define Your Custom Method](#step-1--define-your-custom-method)
+  - [Step 2 – Call Your Custom Method via API](#step-2--call-your-custom-method-via-api)
+  - [Step 3 – Example of Aggregation Query](#step-3--example-of-aggregation-query)
+  - [Step 4 – Error Handling](#step-4--error-handling)
+  - [Step 5 – Include in Postman Collection](#step-5--include-in-postman-collection)
+  - [Summary](#summary)
+- [Testing with Postman](#testing-with-postman)
+- [Security Features](#security-features)
+- [Deployment](#deployment)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Features
 
