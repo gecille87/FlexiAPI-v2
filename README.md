@@ -67,7 +67,7 @@ flexiapi/
 Require via Composer:
 
 ```bash
-composer require your-vendor/flexiapi
+composer require gecille-uptura/flexiapi
 ````
 
 ---
