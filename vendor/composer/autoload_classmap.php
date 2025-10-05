@@ -7,14 +7,4 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
-    'FlexiAPI\\Controllers\\BaseController' => $baseDir . '/src/Controllers/BaseController.php',
-    'FlexiAPI\\Controllers\\CustomController' => $baseDir . '/src/Controllers/CustomController.php',
-    'FlexiAPI\\Controllers\\TableController' => $baseDir . '/src/Controllers/TableController.php',
-    'FlexiAPI\\Core\\FlexiAPI' => $baseDir . '/src/Core/FlexiAPI.php',
-    'FlexiAPI\\Core\\Router' => $baseDir . '/src/Core/Router.php',
-    'FlexiAPI\\DB\\DBAdapterInterface' => $baseDir . '/src/DB/DBAdapterInterface.php',
-    'FlexiAPI\\DB\\MySQLAdapter' => $baseDir . '/src/DB/MySQLAdapter.php',
-    'FlexiAPI\\Services\\QueryBuilder' => $baseDir . '/src/Services/QueryBuilder.php',
-    'FlexiAPI\\Utils\\Response' => $baseDir . '/src/Utils/Response.php',
-    'FlexiAPI\\Validators\\InputValidator' => $baseDir . '/src/Validators/InputValidator.php',
 );

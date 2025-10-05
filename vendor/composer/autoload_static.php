@@ -7,14 +7,14 @@ namespace Composer\Autoload;
 class ComposerStaticInitc751cce2001e3c8637a5376755965d8f
 {
     public static $prefixLengthsPsr4 = array (
-        'F' => 
+        'F' =>
         array (
             'FlexiAPI\\' => 9,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'FlexiAPI\\' => 
+        'FlexiAPI\\' =>
         array (
             0 => __DIR__ . '/../..' . '/src',
         ),
@@ -22,16 +22,6 @@ class ComposerStaticInitc751cce2001e3c8637a5376755965d8f
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'FlexiAPI\\Controllers\\BaseController' => __DIR__ . '/../..' . '/src/Controllers/BaseController.php',
-        'FlexiAPI\\Controllers\\CustomController' => __DIR__ . '/../..' . '/src/Controllers/CustomController.php',
-        'FlexiAPI\\Controllers\\TableController' => __DIR__ . '/../..' . '/src/Controllers/TableController.php',
-        'FlexiAPI\\Core\\FlexiAPI' => __DIR__ . '/../..' . '/src/Core/FlexiAPI.php',
-        'FlexiAPI\\Core\\Router' => __DIR__ . '/../..' . '/src/Core/Router.php',
-        'FlexiAPI\\DB\\DBAdapterInterface' => __DIR__ . '/../..' . '/src/DB/DBAdapterInterface.php',
-        'FlexiAPI\\DB\\MySQLAdapter' => __DIR__ . '/../..' . '/src/DB/MySQLAdapter.php',
-        'FlexiAPI\\Services\\QueryBuilder' => __DIR__ . '/../..' . '/src/Services/QueryBuilder.php',
-        'FlexiAPI\\Utils\\Response' => __DIR__ . '/../..' . '/src/Utils/Response.php',
-        'FlexiAPI\\Validators\\InputValidator' => __DIR__ . '/../..' . '/src/Validators/InputValidator.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
